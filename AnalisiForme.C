@@ -1,5 +1,6 @@
 //analizza le forme d'onda dei 4 canali e crea un file con un tree con tutte le informazioni sull'onda
 //provo con git
+//prova2
 //root[0] .x AnalisiForme.C("nomeFileInput","nomeFileOutput")
 
 Double_t Area(int t,int delta,Double_t rms, Double_t* vec){
