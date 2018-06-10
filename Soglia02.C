@@ -5,6 +5,8 @@
  *  shell> root -l
  *  root[0] .x Soglia.C("nomefile.root",-valore soglia)
  */
+//prova git
+
 
 void Soglia02(const char* fileName, const double soglia)
 {
