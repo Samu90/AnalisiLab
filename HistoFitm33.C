@@ -67,7 +67,7 @@ void HistoFitm33(const char* fileName){
 
     TCut* taglioA= new TCut("");
     TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && t0sc<-48 && A20>260 && (A20-A10)>1000");
-    TCut* taglioC=new TCut("tau22<197 && t0-t2<7 && t0-t2>-7  && A12>0 && t2>0 && t2sc<-40");
+    TCut* taglioC=new TCut("tau22<197 && t0-t2<7 && t0-t2>-7  && A12>10 && t2>0 && t2sc<-40");
     
     /*TCut* taglioAf= new TCut("t0sc>-74 && t0sc<-46");
     TCut* taglioCf=new TCut("A22<12000 && tau22>=20 && t2sc<-140");
@@ -215,22 +215,46 @@ void HistoFitm33(const char* fileName){
     //fittree->Write();
     //gPad->WaitPrimitive();
     //file2->Close();
+    int debug=1;
 
-    TFile* newf = TFile::Open("Sel/outm33Ssel.root", "recreate");
-    TTree* treeS = newtree2->CopyTree(*taglioS);
-    newf->cd();
-    treeS->Write();
-    newf->Close();
-
-    TFile* newf2 = TFile::Open("Sel/outm33Csel.root", "recreate");
-    TTree* treeC = newtree2->CopyTree(*taglioC);
-    newf2->cd();
-    treeC->Write();
-    newf2->Close();
-
-    TFile* newf3 = TFile::Open("Sel/outm33sel.root", "recreate");
-    TTree* treeCS = newtree2->CopyTree(*taglioC && *taglioS);
-    newf3->cd();
-    treeCS->Write();
-    newf3->Close();
+    if(debug==0){
+      TFile* newf = TFile::Open("Sel/outm33Ssel.root", "recreate");
+      TTree* treeS = newtree2->CopyTree(*taglioS);
+      newf->cd();
+      treeS->Write();
+      newf->Close();
+      
+      TFile* newf2 = TFile::Open("Sel/outm33Csel.root", "recreate");
+      TTree* treeC = newtree2->CopyTree(*taglioC);
+      newf2->cd();
+      treeC->Write();
+      newf2->Close();
+      
+      TFile* newf3 = TFile::Open("Sel/outm33sel.root", "recreate");
+      TTree* treeCS = newtree2->CopyTree(*taglioC && *taglioS);
+      newf3->cd();
+      treeCS->Write();
+      newf3->Close();
+    }
+    
+    if(debug==1){
+      TFile* newf = TFile::Open("Sel/noutm33Ssel.root", "recreate");
+      TTree* treeS = newtree2->CopyTree("A10>0" && !*taglioS);
+      newf->cd();
+      treeS->Write();
+      newf->Close();
+      
+      TFile* newf2 = TFile::Open("Sel/noutm33Csel.root", "recreate");
+      TTree* treeC = newtree2->CopyTree("A12>0" && !*taglioC);
+      newf2->cd();
+      treeC->Write();
+      newf2->Close();
+      
+      TFile* newf3 = TFile::Open("Sel/noutm33sel.root", "recreate");
+      TTree* treeCS = newtree2->CopyTree("A10>0 && A12>0" && !*taglioC && !*taglioS);
+      newf3->cd();
+      treeCS->Write();
+      newf3->Close();
+    }
+    
 }

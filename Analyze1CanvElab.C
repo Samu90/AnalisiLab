@@ -33,7 +33,7 @@ void Analyze1CanvElab(const char* fileName, const int j)
       if(j==0) p=k;
     
       cout << p << endl;
-      tree->GetEntry(k);
+      tree->GetEntry(p);
       
       
       Double_t v0[4096], v2[4096], v4[4096], v6[4096], time[4096];

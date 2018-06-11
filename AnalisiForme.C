@@ -236,7 +236,7 @@ void AnalisiForme(const char* fileName,const char* fileName2)
       
       
       A10=Area(t0,300,rms0,v0);
-      A12=Area(t2,20,rms2,v2);
+      A12=Area(t2,15,rms2,v2);
       A14=Area(t4,30,rms4,v4);
       A16=Area(t6,300,rms6,v6);
       
@@ -244,20 +244,20 @@ void AnalisiForme(const char* fileName,const char* fileName2)
       
       
       A20=Area(t0,800,rms0,v0);
-      A22=Area(t2,800,rms2,v2);
+      A22=Area(t2,20,rms2,v2);
       A24=Area(t4,100,rms4,v4);
       A26=Area(t6,800,rms6,v6);
       
       //calcolo del tau1
             
       tau10=Tau(t0,300,rms0,v0,A10);
-      tau12=Tau(t2,20,rms2,v2,A12);
+      tau12=Tau(t2,15,rms2,v2,A12);
       tau14=Tau(t4,30,rms4,v4,A14);
       tau16=Tau(t6,300,rms6,v6,A16);
 
       //calcolo del tau2
       tau20=Tau(t0,800,rms0,v0,A20);
-      tau22=Tau(t2,800,rms2,v2,A22);
+      tau22=Tau(t2,20,rms2,v2,A22);
       tau24=Tau(t4,100,rms4,v4,A24);
       tau26=Tau(t6,800,rms6,v6,A26);
      
