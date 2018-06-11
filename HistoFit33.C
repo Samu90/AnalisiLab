@@ -215,13 +215,13 @@ void HistoFit33(const char* fileName){
     //file2->Close();
 
     TFile* newf = TFile::Open("Sel/out33Ssel.root", "recreate");
-    TTree* treeS = newtree2->CopyTree(*taglioS);
+    TTree* treeS = newtree2->CopyTree("A10>0" && !*taglioS);
     newf->cd();
     treeS->Write();
     newf->Close();
 
     TFile* newf2 = TFile::Open("Sel/out33Csel.root", "recreate");
-    TTree* treeC = newtree2->CopyTree(*taglioC);
+    TTree* treeC = newtree2->CopyTree("A12>0" && !*taglioC);
     newf2->cd();
     treeC->Write();
     newf2->Close();

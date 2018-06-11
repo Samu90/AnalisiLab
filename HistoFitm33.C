@@ -61,10 +61,14 @@ void HistoFitm33(const char* fileName){
     newtree2->SetBranchAddress("tau26",&tau26);
 
     int nbin=40;
-    TCut* taglioA= new TCut("A10>0 && A12>0");
-    TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && tau20<370 && tau20>280 && A20>3000");
-    TCut* taglioC=new TCut("tau22<190 && A22>90 && t2sc>-140");
+    //TCut* taglioA= new TCut("A10>0 && A12>0");
+    //TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && tau20<370 && tau20>280 && A20>3000");
+    //TCut* taglioC=new TCut("tau22<190 && A22>90 && t2sc>-140");
 
+    TCut* taglioA= new TCut("");
+    TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && t0sc<-48 && A20>260 && (A20-A10)>1000");
+    TCut* taglioC=new TCut("tau22<197 && t0-t2<7 && t0-t2>-7  && A12>0 && t2>0 && t2sc<-40");
+    
     /*TCut* taglioAf= new TCut("t0sc>-74 && t0sc<-46");
     TCut* taglioCf=new TCut("A22<12000 && tau22>=20 && t2sc<-140");
     TCut* taglioSf=new TCut("A20<300000");*/
