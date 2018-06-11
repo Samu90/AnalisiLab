@@ -65,7 +65,7 @@ void HistoFit33(const char* fileName){
     int nbin=40;
     TCut* taglioA= new TCut("");
     TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && t0sc<-48 && A20>260 && (A20-A10)>1000");
-    TCut* taglioC=new TCut("tau22<197 && t0-t2<7 && t0-t2>-7  && A12>0 && t2>0 && t2sc<-40");
+    TCut* taglioC=new TCut("tau22<197 && t0-t2<7 && t0-t2>-7 && A12>0 && t2>0 && t2sc<-40");
 
     /*TCut* taglioAf= new TCut("t0sc>-74 && t0sc<-46");
     TCut* taglioCf=new TCut("A22<12000 && tau22>=20 && t2sc<-140");
