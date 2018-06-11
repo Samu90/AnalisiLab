@@ -77,7 +77,7 @@ void Analyze1CanvElab(const char* fileName, const int j)
     */
     
     
-      TCanvas *cha0 = new TCanvas("cha0", "Canale 0",1200,800);
+      TCanvas *cha0 = new TCanvas("cha0", "Canale 0",1000,650);
       cha0->Divide(2,2);
       cha0->cd(1);
       TGraph *antonio = new TGraph(Nsample, time, v0);

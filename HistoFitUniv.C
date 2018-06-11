@@ -1,4 +1,4 @@
-void HistoFitm33(const char* fileName,int debug){
+void HistoFitUniv(const char* fileName, int debug){
 
     TFile* file = new TFile(fileName);
     TTree* newtree2 = (TTree*)file->Get("newtree");
@@ -66,8 +66,8 @@ void HistoFitm33(const char* fileName,int debug){
     //TCut* taglioC=new TCut("tau22<190 && A22>90 && t2sc>-140");
 
     TCut* taglioA= new TCut("");
-    TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && t0sc<-48 && A20>260 && (A20-A10)>1000");
-    TCut* taglioC=new TCut("tau22<197 && t0-t2<7 && t0-t2>-7 && A12>10 && t2>0 && t2sc<-40");
+    TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && t0sc<-48 && A20>260 && (A20-A10)>1000 && hmax0<=37");
+    TCut* taglioC=new TCut("tau22<197 && t0-t2<7 && t0-t2>-7 && A12>10 && t2>0 && t2sc<-40 && hmax2<=26");
     
     /*TCut* taglioAf= new TCut("t0sc>-74 && t0sc<-46");
     TCut* taglioCf=new TCut("A22<12000 && tau22>=20 && t2sc<-140");
@@ -78,7 +78,7 @@ void HistoFitm33(const char* fileName,int debug){
     //t0
     
 
-    TCanvas* graf = new TCanvas("mycanvas","",1000,800);
+    TCanvas* graf = new TCanvas("mycanvas","",1200,800);
     graf->Divide(2,2);
     graf->cd(1);
     newtree2->Draw("t0",*taglioA && *taglioS);
@@ -215,7 +215,7 @@ void HistoFitm33(const char* fileName,int debug){
     //fittree->Write();
     //gPad->WaitPrimitive();
     //file2->Close();
-    
+
 
     if(debug==0){
       TFile* newf = TFile::Open("Sel/outm33Ssel.root", "recreate");

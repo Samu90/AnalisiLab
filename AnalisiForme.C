@@ -29,6 +29,14 @@ Double_t Tau(int t,int delta,Double_t rms, Double_t* vec,Double_t area){
 
 }
 
+Double_t Max(Double_t* vec){
+    int i;
+    Double_t max=0;
+    for(i=90;i<200;i++){
+        if(vec[i]>max) max=vec[i];
+    }
+    return max;
+}
 
 void AnalisiForme(const char* fileName,const char* fileName2)
 {
@@ -50,7 +58,9 @@ void AnalisiForme(const char* fileName,const char* fileName2)
     Int_t t0sc,t2sc,t4sc;                                        //tempi scalati con t6
     Double_t A10,A12,A14,A16,A20,A22,A24,A26;                     //aree fino al tempo tH1 e tH2
     Double_t tau10,tau12,tau14,tau16;                              // tau discesa normalizzato ad A1
-    Double_t tau20,tau22,tau24,tau26;                              // tau discesa normalizzato ad A2
+    Double_t tau20,tau22,tau24,tau26;
+    Double_t hmax0, hmax2, hmax4, hmax6;
+    // tau discesa normalizzato ad A2
     Int_t ctrl0,ctrl2,ctrl4,ctrl6;                                // controlli 
     Int_t delta1=200,delta2=400;                                    // tempo prima area e seconda area
     int i,j;
@@ -117,6 +127,11 @@ void AnalisiForme(const char* fileName,const char* fileName2)
     newtree->Branch("tau22",&tau22);
     newtree->Branch("tau24",&tau24);
     newtree->Branch("tau26",&tau26);
+    
+    newtree->Branch("hmax0",&hmax0);
+    newtree->Branch("hmax2",&hmax2);
+    newtree->Branch("hmax4",&hmax4);
+    newtree->Branch("hmax6",&hmax6);
     
     Int_t Nrms=3;
     UInt_t timeLow=90;
@@ -244,7 +259,7 @@ void AnalisiForme(const char* fileName,const char* fileName2)
       
       
       A20=Area(t0,800,rms0,v0);
-      A22=Area(t2,20,rms2,v2);
+      A22=Area(t2,100,rms2,v2);
       A24=Area(t4,100,rms4,v4);
       A26=Area(t6,800,rms6,v6);
       
@@ -260,6 +275,15 @@ void AnalisiForme(const char* fileName,const char* fileName2)
       tau22=Tau(t2,20,rms2,v2,A22);
       tau24=Tau(t4,100,rms4,v4,A24);
       tau26=Tau(t6,800,rms6,v6,A26);
+        
+        
+    
+      //calcolo di hmax
+        hmax0=Max(v0);
+        hmax2=Max(v2);
+        hmax4=Max(v4);
+        hmax6=Max(v6);
+        
      
 
       
