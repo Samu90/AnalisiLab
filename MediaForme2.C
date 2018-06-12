@@ -17,8 +17,7 @@ gROOT->Reset();
     Int_t Nevent, Nsample, entrate;
     Int_t t0,t2,t4,t6;
     Int_t t0sc,t2sc,t4sc,t6sc;
-    Int_t t0sinc, t2sinc, t4sinc, t6sinc;
-
+   
     tree->SetBranchAddress("v0",&ch0);
     tree->SetBranchAddress("v2",&ch2);
     tree->SetBranchAddress("v4",&ch4);
@@ -53,12 +52,7 @@ gROOT->Reset();
       }
 
       //inizilizzo tempi di sincronizzazione
-    tree->GetEntry(4);
-      t0sinc=t0;
-      t2sinc=t2;
-      t4sinc=t4;
-      t6sinc=t6;
-
+   
       entrate=tree->GetEntries();
       
     for(j=0;j<entrate;j++){

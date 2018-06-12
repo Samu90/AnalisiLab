@@ -61,6 +61,7 @@ void HistoFitUniv(const char* fileName, int debug){
     newtree2->SetBranchAddress("tau26",&tau26);
 
     int nbin=40;
+    int grafici=0;
     //TCut* taglioA= new TCut("A10>0 && A12>0");
     //TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && tau20<370 && tau20>280 && A20>3000");
     //TCut* taglioC=new TCut("tau22<190 && A22>90 && t2sc>-140");
@@ -69,6 +70,7 @@ void HistoFitUniv(const char* fileName, int debug){
     TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && t0sc<-48 && A20>260 && (A20-A10)>1000 && hmax0<=37");
     TCut* taglioC=new TCut("tau22<197 && t0-t2<7 && t0-t2>-7 && A12>10 && t2>0 && t2sc<-40 && hmax2<=26");
     
+
     /*TCut* taglioAf= new TCut("t0sc>-74 && t0sc<-46");
     TCut* taglioCf=new TCut("A22<12000 && tau22>=20 && t2sc<-140");
     TCut* taglioSf=new TCut("A20<300000");*/
@@ -77,7 +79,7 @@ void HistoFitUniv(const char* fileName, int debug){
 
     //t0
     
-
+    if(grafici==1){
     TCanvas* graf = new TCanvas("mycanvas","",1200,800);
     graf->Divide(2,2);
     graf->cd(1);
@@ -205,7 +207,10 @@ void HistoFitUniv(const char* fileName, int debug){
     newtree2->Draw("A22",*taglioA && *taglioC);                                                                                                                                                                                                  
     grafz->cd(3);                                                                                                                                                                                                                      
     newtree2->Draw("A24",*taglioA);
-    grafz->cd(4);                                                                                                                                                                                                                       
+    grafz->cd(4);
+    }//chudo l'if grafici
+
+    
     //newtree2->Draw("A26",*taglioA);
 
     //newtree2->Scan("A10:A20:tau20:t0sc",*taglioA && *taglioS);
