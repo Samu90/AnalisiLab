@@ -67,7 +67,7 @@ void HistoFitUniv(const char* fileName, int debug){
     //TCut* taglioC=new TCut("tau22<190 && A22>90 && t2sc>-140");
 
     TCut* taglioA= new TCut("");
-    TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && t0sc<-48 && A20>260 && (A20-A10)>1000 && hmax0<=37");
+    TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && t0sc<-48 && A20>160 && (A20-A10)>100 && hmax0<=37");
     TCut* taglioC=new TCut("tau22<197 && t0-t2<7 && t0-t2>-7 && A12>10 && t2>0 && t2sc<-40 && hmax2<=26");
     
 

@@ -84,31 +84,31 @@ void Analyze1CanvElab(const char* fileName, const int j)
       antonio->SetTitle("Canale 0");
       antonio->Draw();
       
-
-
-    cha0->cd(2);
-    TGraph *gigetto = new TGraph(Nsample, time, v2);
-    gigetto->SetTitle("Canale 2");
-    gigetto->Draw();
-    gigetto->SetMinimum(-200);
-
-
-    cha0->cd(3);
-    TGraph *pablo = new TGraph(Nsample, time, v4);
-    pablo->SetTitle("Canale 4");
-    pablo->Draw();
-
+      
+      
+      cha0->cd(2);
+      TGraph *gigetto = new TGraph(Nsample, time, v2);
+      gigetto->SetTitle("Canale 2");
+      gigetto->Draw();
+      gigetto->SetMinimum(-200);
+      
+      
+      cha0->cd(3);
+      TGraph *pablo = new TGraph(Nsample, time, v4);
+      pablo->SetTitle("Canale 4");
+      pablo->Draw();
+      
     
-    cha0->cd(4);
-    TGraph *antoniocalabro = new TGraph(Nsample, time, v6);
-    antoniocalabro->SetTitle("Canale 6");
-    antoniocalabro->Draw();
-
-    
-    cha0->Update();
-    if(j!=0) break;
-    gPad->WaitPrimitive();
+      cha0->cd(4);
+      TGraph *antoniocalabro = new TGraph(Nsample, time, v6);
+      antoniocalabro->SetTitle("Canale 6");
+      antoniocalabro->Draw();
+      
+      
+      cha0->Update();
+      if(j!=0) break;
+      gPad->WaitPrimitive();
     }//chiudo for
     
-
+    
 }
