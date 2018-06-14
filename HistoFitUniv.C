@@ -61,7 +61,7 @@ void HistoFitUniv(const char* fileName, int debug){
     newtree2->SetBranchAddress("tau26",&tau26);
 
     int nbin=40;
-    int grafici=0;
+    int grafici=1;
     //TCut* taglioA= new TCut("A10>0 && A12>0");
     //TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && tau20<370 && tau20>280 && A20>3000");
     //TCut* taglioC=new TCut("tau22<190 && A22>90 && t2sc>-140");
