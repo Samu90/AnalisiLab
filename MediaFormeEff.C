@@ -17,15 +17,15 @@ Double_t Area(int t,int delta, Double_t* vec){
 
 
 
-void MediaFormeEff(const char* fileName,const char* fileName2)
+void MediaFormeEff(const char* fileName)
 {
 gROOT->Reset();
     // apre file prende il TTree di nome "newtree" dal file
     TFile* file = new TFile(fileName);
     TTree* tree = (TTree*)file->Get("newtree");
 
-    TFile* fileout = new TFile(fileName2, "RECREATE");
-    TTree* datatree = new TTree("datatree", "alberomedie");
+    //    TFile* fileout = new TFile(fileName2, "RECREATE");
+    //TTree* datatree = new TTree("datatree", "alberomedie");
     
     // setta indirizzi delle variabili di interesse
     Double_t ch0[1000],ch2[1000],ch4[1000],ch6[1000];
@@ -52,8 +52,8 @@ gROOT->Reset();
     tree->SetBranchAddress("t2sc",&t2sc);
     tree->SetBranchAddress("t4sc",&t4sc);
 
-    datatree->Branch("nsample",&Nsample,"nsample/I");
-    datatree->Branch("nevent",&Nevent,"nevent/I");
+    //datatree->Branch("nsample",&Nsample,"nsample/I");
+    //datatree->Branch("nevent",&Nevent,"nevent/I");
     
     
     
@@ -64,10 +64,10 @@ gROOT->Reset();
     int timeLow=90;
 
 
-    datatree->Branch("ch0",temp0,"ch0[nsample]/D");
-    datatree->Branch("ch2",temp2,"ch2[nsample]/D");
-    datatree->Branch("ch4",temp4,"ch4[nsample]/D");
-    datatree->Branch("ch6",temp6,"ch6[nsample]/D");
+    //datatree->Branch("ch0",temp0,"ch0[nsample]/D");
+    //datatree->Branch("ch2",temp2,"ch2[nsample]/D");
+    //datatree->Branch("ch4",temp4,"ch4[nsample]/D");
+    //datatree->Branch("ch6",temp6,"ch6[nsample]/D");
 
     
     //azzero i temporanei
@@ -120,7 +120,7 @@ gROOT->Reset();
     Nevent=1; // correggo il numero dell'evento a mano
     
     cout<<"vdsg"<<Nsample<<endl;
-    datatree->Fill();
+    //datatree->Fill();
     
     
     TCanvas *cha0 = new TCanvas("cha0", "Canale 0");
@@ -133,9 +133,11 @@ gROOT->Reset();
     //  antonio->SetMaximum(50);
     antonio->Draw();
     TF1 *myf = new TF1("myf","[0]*exp(-x/[1])",140,940);
-    myf->SetParameter(1,5);
+    myf->SetParameter(1,300);
+    myf->SetParameter(0,-100);
     antonio->Fit("myf","RV");
     gStyle->SetOptFit();
+    antonio->SetTitle("Scintillazione");
     antonio->Draw("APL");
     AmpS=myf->GetParameter(0);
     taufit=myf->GetParameter(1);
@@ -145,9 +147,10 @@ gROOT->Reset();
     gigetto->SetTitle("Canale 2");
 //  gigetto->SetMinimum(-400);
 //  gigetto->SetMaximum(50);
+    gigetto->SetTitle("Cherenkov con Scintillazione");
     gigetto->Draw();
+
     TF1 *myf2 = new TF1("myf2","[0]*exp(-x/[1])",110,940);
-    myf2->SetParameter(0,1);
     myf2->SetParameter(0,1);
     myf2->FixParameter(1,taufit);
     gigetto->Fit("myf2","RV");
@@ -155,16 +158,8 @@ gROOT->Reset();
     gigetto->Draw("APL");
     AmpC=myf2->GetParameter(0);
 
-    // riscalo e sottraggo
-    for(i=0;i<Nsample;i++){
-        temp2[i] -= (AmpC/AmpS * temp0[i]);
-    }// chiudo for i
-    
-    //ora ho v0 e v2 corrette
-    //rapporto tra le aree
-
     //calcolo i t0
-    int ctrl0=0;
+     int ctrl0=0;
     int ctrl2=0;
     int Nrms=0;
     int nt0=0;
@@ -174,7 +169,7 @@ gROOT->Reset();
     
     for(i=0;i<Nsample;i++){
       
-      if(ctrl0==0 && temp0[i]<-0.2){ //&& temp0[i+1]<-Nrms*rms0 && temp0[i+2]<-Nrms*rms0){
+      if(ctrl0==0 && temp0[i]<-0.3){ //&& temp0[i+1]<-Nrms*rms0 && temp0[i+2]<-Nrms*rms0){
 	ctrl0+=1;
 	nt0=i;
       }//chiudo if
@@ -183,14 +178,26 @@ gROOT->Reset();
 	nt2=i;
       }//chiudo if 
     }//chiudo for
-
-    //cout<<nt0<< "  "<<nt2<<endl; 
+    
+    
+    // riscalo e sottraggo
+    for(i=0;i<Nsample;i++){
+        temp2[i] -= (AmpC/AmpS * temp0[i]);
+    }// chiudo for i
+    
+      
+    //ora ho v0 e v2 corrette
+    //rapporto tra le aree
+    //calcolo i t0
+  
+    cout<<nt0<< "  "<< nt2<<"  " << nt2+18<<endl; 
     //calcolo le aree
 
     Double_t AreaC,AreaS;
     AreaC=Area(nt0,18,temp2);
     AreaS=Area(nt2,945-nt2,temp0);
 
+    cout<< AreaS<< "   " <<AreaC<< endl;
     cout<< AreaS/AreaC<< endl;
 
     
@@ -208,10 +215,21 @@ gROOT->Reset();
       //  antoniocalabro->SetMinimum(-250);
       //  antoniocalabro->SetMaximum(50);
       antoniocalabro->Draw();
+
+      Double_t scal0[1000];
       
-      fileout->cd();
-      datatree->Write();
-      fileout->Close();
+      for(i=0;i<Nsample-2;i++){
+       scal0[i] = (AmpC/AmpS*temp0[i]);
+      }// chiudo for i
+      
+      TGraph *pippo= new TGraph(Nsample, time,scal0);
+      cha0->cd(2);
+      //pippo->SetLineColorAlpha(46, 0.1);
+      pippo->Draw("same");
+      
+      //fileout->cd();
+      //datatree->Write();
+      //fileout->Close();
       
       
       file->Close();

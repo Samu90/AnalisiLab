@@ -1,4 +1,4 @@
-void HistoFitUniv(const char* fileName, int debug){
+void HistoFitUniv(const char* fileName,const char* fileName2){
 
     TFile* file = new TFile(fileName);
     TTree* newtree2 = (TTree*)file->Get("newtree");
@@ -12,7 +12,6 @@ void HistoFitUniv(const char* fileName, int debug){
     Double_t A10,A12,A14,A16,A20,A22,A24,A26;                     //aree fino al tempo tH1 e tH2
     Double_t tau10,tau12,tau14,tau16;                              // tau discesa normalizzato ad A1
     Double_t tau20,tau22,tau24,tau26;                              // tau discesa normalizzato ad A2
-    Double_t meanH0, rmsH0,meanH2,rmsH2;
     Int_t t0sc,t2sc,t4sc; 
     int i,j;
 
@@ -61,7 +60,7 @@ void HistoFitUniv(const char* fileName, int debug){
     newtree2->SetBranchAddress("tau26",&tau26);
 
     int nbin=40;
-    int grafici=1;
+    
     //TCut* taglioA= new TCut("A10>0 && A12>0");
     //TCut* taglioS=new TCut("A20<300000 && t0sc>-140 && tau20<370 && tau20>280 && A20>3000");
     //TCut* taglioC=new TCut("tau22<190 && A22>90 && t2sc>-140");
@@ -78,7 +77,7 @@ void HistoFitUniv(const char* fileName, int debug){
     
 
     //t0
-    
+    int grafici=0;
     if(grafici==1){
     TCanvas* graf = new TCanvas("mycanvas","",1200,800);
     graf->Divide(2,2);
@@ -116,17 +115,17 @@ void HistoFitUniv(const char* fileName, int debug){
     
     grafsc->cd(1);
     s0->Fit("fitFcn0");
-    cout<<"media0:  "<<fitFcn0->GetParameter(1)<<endl;
-    cout<<"rms0:  "<<fitFcn0->GetParameter(2)<<endl;
-    meanH0=fitFcn0->GetParameter(1);
-    rmsH0=fitFcn0->GetParameter(2);
+    //cout<<"media0:  "<<fitFcn0->GetParameter(1)<<endl;
+    //cout<<"rms0:  "<<fitFcn0->GetParameter(2)<<endl;
+    //meanH0=fitFcn0->GetParameter(1);
+    //rmsH0=fitFcn0->GetParameter(2);
     
     grafsc->cd(2);
     s2->Fit("fitFcn2");
-    cout<<"media2:  "<<fitFcn2->GetParameter(1)<<endl;
-    cout<<"rms2:  "<<fitFcn2->GetParameter(2)<<endl;
-    meanH2=fitFcn2->GetParameter(1);
-    rmsH2=fitFcn2->GetParameter(2);
+    //cout<<"media2:  "<<fitFcn2->GetParameter(1)<<endl;
+    //cout<<"rms2:  "<<fitFcn2->GetParameter(2)<<endl;
+    //meanH2=fitFcn2->GetParameter(1);
+    // rmsH2=fitFcn2->GetParameter(2);
     
     grafsc->cd(3);
     s4->Draw();
@@ -220,7 +219,7 @@ void HistoFitUniv(const char* fileName, int debug){
     //fittree->Write();
     //gPad->WaitPrimitive();
     //file2->Close();
-
+    int debug=0;
 
     if(debug==0){
       TFile* newf = TFile::Open("Sel/outm33Ssel.root", "recreate");
@@ -235,7 +234,7 @@ void HistoFitUniv(const char* fileName, int debug){
       treeC->Write();
       newf2->Close();
       
-      TFile* newf3 = TFile::Open("Sel/outm33sel.root", "recreate");
+      TFile* newf3 = TFile::Open(fileName2, "recreate");
       TTree* treeCS = newtree2->CopyTree(*taglioC && *taglioS);
       newf3->cd();
       treeCS->Write();
