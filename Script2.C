@@ -1,8 +1,3 @@
-
-
-//Fa una media di tutte le forme d'onda contenenti eventi
-//root[0] .x MediaForme("nomeFileInput","nomeFileOutput")
-
 Double_t Area(int t,int delta, Double_t* vec){
   Double_t A=0;
   
@@ -17,7 +12,7 @@ Double_t Area(int t,int delta, Double_t* vec){
 
 
 
-void MediaFormeEff(const char* fileName)
+Double_t MediaFormeEffScript(const char* fileName)
 {
 gROOT->Reset();
     // apre file prende il TTree di nome "newtree" dal file
@@ -123,39 +118,39 @@ gROOT->Reset();
     //datatree->Fill();
     
     
-    TCanvas *cha0 = new TCanvas("cha0", "Canale 0");
-    cha0->Divide(2,2);
-    cha0->cd(1);
+    //TCanvas *cha0 = new TCanvas("cha0", "Canale 0");
+    //cha0->Divide(2,2);
+    //cha0->cd(1);
 
     TGraph *antonio = new TGraph(Nsample, time, temp0);
     antonio->SetTitle("Canale 0");
     //antonio->SetMinimum(-400);
     //  antonio->SetMaximum(50);
-    antonio->Draw();
+    //antonio->Draw();
     TF1 *myf = new TF1("myf","[0]*exp(-x/[1])",140,940);
     myf->SetParameter(1,300);
     myf->SetParameter(0,-100);
     antonio->Fit("myf","RV");
     gStyle->SetOptFit();
     antonio->SetTitle("Scintillazione");
-    antonio->Draw("APL");
+    //antonio->Draw("APL");
     AmpS=myf->GetParameter(0);
     taufit=myf->GetParameter(1);
     
-    cha0->cd(2);
+    //cha0->cd(2);
     TGraph *gigetto = new TGraph(Nsample, time, temp2);
     gigetto->SetTitle("Canale 2");
 //  gigetto->SetMinimum(-400);
 //  gigetto->SetMaximum(50);
     gigetto->SetTitle("Cherenkov con Scintillazione");
-    gigetto->Draw();
+    //gigetto->Draw();
 
     TF1 *myf2 = new TF1("myf2","[0]*exp(-x/[1])",110,940);
     myf2->SetParameter(0,1);
     myf2->FixParameter(1,taufit);
     gigetto->Fit("myf2","RV");
     gStyle->SetOptFit();
-    gigetto->Draw("APL");
+    //gigetto->Draw("APL");
     AmpC=myf2->GetParameter(0);
 
     //calcolo i t0
@@ -181,15 +176,15 @@ gROOT->Reset();
     
     
     // riscalo e sottraggo
-    for(i=0;i<Nsample-5;i++){
-      temp2[i] -= (AmpC/AmpS * temp0[i-(nt2-nt0)]);
+    for(i=0;i<Nsample;i++){
+        temp2[i] -= (AmpC/AmpS * temp0[i]);
     }// chiudo for i
     
       
     //ora ho v0 e v2 corrette
     //rapporto tra le aree
     //calcolo i t0
-  
+    
     cout<<nt0<< "  "<< nt2<<"  " << nt2+18<<endl; 
     //calcolo le aree
 
@@ -201,37 +196,75 @@ gROOT->Reset();
     cout<< AreaS/AreaC<< endl;
 
     
-      cha0->cd(3);
+    /*cha0->cd(3);
       TGraph *pablo = new TGraph(Nsample, time, temp4);
       pablo->SetTitle("Canale 4");
       //  pablo->SetMinimum(-250);
       //  pablo->SetMaximum(50);
-      pablo->Draw();
+      pablo->Draw();*/
       
       
-      cha0->cd(4);
+      /*cha0->cd(4);
       TGraph *antoniocalabro = new TGraph(Nsample, time, temp2);
       antoniocalabro->SetTitle("Cherenkov senza Scintillazione");
       //  antoniocalabro->SetMinimum(-250);
       //  antoniocalabro->SetMaximum(50);
-      antoniocalabro->Draw();
+      antoniocalabro->Draw();*/
 
       Double_t scal0[1000];
       
-      for(i=0;i<Nsample-5;i++){
-	scal0[i] = (AmpC/AmpS*temp0[i-(nt2-nt0)]);
+      for(i=0;i<Nsample-2;i++){
+       scal0[i] = (AmpC/AmpS*temp0[i]);
       }// chiudo for i
       
-      TGraph *pippo= new TGraph(Nsample, time,scal0);
+      /*  TGraph *pippo= new TGraph(Nsample, time,scal0);
       cha0->cd(2);
       //pippo->SetLineColorAlpha(46, 0.1);
       pippo->Draw("same");
-      
+      */
       //fileout->cd();
       //datatree->Write();
       //fileout->Close();
       
       
       file->Close();
-      
+
+      return AreaS/AreaC;
+}
+
+
+void Script2(){
+
+  Double_t y[7];
+  Double_t x[7];
+
+  y[0]=33;
+  y[1]=20;
+  y[2]=10;
+  y[3]=0;
+  y[4]=-10;
+  y[5]=-20;
+  y[6]=-33;
+  
+   x[0]=MediaFormeEffScript("Sel/out33sel.root");
+   x[0]=MediaFormeEffScript("Sel/out33sel.root");
+   x[1]=MediaFormeEffScript("Sel/out20sel.root");
+   x[1]=MediaFormeEffScript("Sel/out20sel.root");
+   x[2]=MediaFormeEffScript("Sel/out10sel.root");
+   x[2]=MediaFormeEffScript("Sel/out10sel.root");
+   x[3]=MediaFormeEffScript("Sel/out0sel.root");
+   x[3]=MediaFormeEffScript("Sel/out0sel.root");
+   x[4]=MediaFormeEffScript("Sel/outm10sel.root");
+   x[4]=MediaFormeEffScript("Sel/outm10sel.root");
+   x[5]=MediaFormeEffScript("Sel/outm20sel.root");
+   x[5]=MediaFormeEffScript("Sel/outm20sel.root");
+   x[6]=MediaFormeEffScript("Sel/outm33sel.root");
+   x[6]=MediaFormeEffScript("Sel/outm33sel.root");
+   TCanvas* canv= new TCanvas("mycanvas");
+  TGraph* grafico=new TGraph(7,y,x);
+  grafico->SetMarkerStyle(8);
+  grafico->Draw("ap");
+  
+
+
 }
