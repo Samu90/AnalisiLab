@@ -4,30 +4,7 @@
 //prova3
 //root[0] .x AnalisiForme.C("nomeFileInput","nomeFileOutput")
 
-Double_t Area(int t,int delta,Double_t rms, Double_t* vec){
-  Double_t A=0;
-  
-  for(int i=t;i<t+delta;i++){      
-	if(vec[i]<-3*rms){
-	  A += (-(vec[i]));
-	}//chiudo if
-      }//chiudo for i
-  return A;
 
-}
-
-Double_t Tau(int t,int delta,Double_t rms, Double_t* vec,Double_t area){
-  Double_t A=0;
-  if(area>0){
-  for(int i=t;i<t+delta;i++){      
-	if(vec[i]<-3*rms){
-	  A += (i*(-(vec[i])));
-	}//chiudo if
-      }//chiudo for i
-  return A/area;
-  } else {return 0;}
-
-}
 
 Double_t Max(Double_t* vec){
     int i;
