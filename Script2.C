@@ -10,9 +10,24 @@ Double_t Area(int t,int delta, Double_t* vec){
 
 }
 
+Double_t IncArea(Double_t*vec, int t0, int delta, Double_t sigma){
+  Double_t Temp[1000];
+
+  TRandom* rand= new TRandom();
+  TH1D* histo=new TH1D();
+  
+  for(int j=0;j<500;j++){
+    for(int i=t0;i<delta;i++){
+      Temp[1000]=rand->Gaus(vec[i],sigma);  
+    }//chiudo for t0
+    histo->Fill(Area(t0,delta,Temp));
+  }//chiudo for j
+  return histo->GetStdDev();
+}
 
 
-Double_t MediaFormeEffScript(const char* fileName)
+
+Double_t MediaFormeEffScript(const char* fileName,Double_t *var)
 {
 gROOT->Reset();
     // apre file prende il TTree di nome "newtree" dal file
@@ -28,7 +43,8 @@ gROOT->Reset();
     Int_t t0,t2,t4,t6;
     Int_t t0sc,t2sc,t4sc,t6sc;
     Double_t taufit, AmpS, AmpC;
-   
+    Double_t SAreaC, SAreaS;
+    
     tree->SetBranchAddress("v0",&ch0);
     tree->SetBranchAddress("v2",&ch2);
     tree->SetBranchAddress("v4",&ch4);
@@ -180,7 +196,8 @@ gROOT->Reset();
         temp2[i] -= (AmpC/AmpS * temp0[i]);
     }// chiudo for i
     
-      
+    Double_t m=0.2398;
+    Double_t sigma=1/m/1.732051;                    // 1/m/sqrt(3) statistico
     //ora ho v0 e v2 corrette
     //rapporto tra le aree
     //calcolo i t0
@@ -189,12 +206,17 @@ gROOT->Reset();
     //calcolo le aree
 
     Double_t AreaC,AreaS;
-    AreaC=Area(nt0,18,temp2);
-    AreaS=Area(nt2,945-nt2,temp0);
+    AreaC=Area(nt2,18,temp2);
+    AreaS=Area(nt0,945-nt0,temp0);
+    SAreaC=IncArea(temp2,nt2,18,sigma);
+    SAreaS=IncArea(temp0,nt0,945-nt0,sigma);
 
+    
     cout<< AreaS<< "   " <<AreaC<< endl;
     cout<< AreaS/AreaC<< endl;
 
+    Double_t SigmaTot=sqrt((1/AreaC)*(1/AreaC)*SAreaS*SAreaS + (AreaS/AreaC)*(AreaS/AreaC)*SAreaC*SAreaC);
+    *var=SigmaTot;
     
     /*cha0->cd(3);
       TGraph *pablo = new TGraph(Nsample, time, temp4);
@@ -229,14 +251,16 @@ gROOT->Reset();
       
       file->Close();
 
-      return AreaS/AreaC;
+      return AreaC/AreaS;
+      
 }
 
 
 void Script2(){
 
-  Double_t y[7];
-  Double_t x[7];
+  Double_t y[8];
+  Double_t x[8];
+  Double_t e[8];
 
   y[0]=33;
   y[1]=20;
@@ -245,25 +269,28 @@ void Script2(){
   y[4]=-10;
   y[5]=-20;
   y[6]=-33;
+  y[7]=-40;
   
-   x[0]=MediaFormeEffScript("Sel/out33sel.root");
-   x[0]=MediaFormeEffScript("Sel/out33sel.root");
-   x[1]=MediaFormeEffScript("Sel/out20sel.root");
-   x[1]=MediaFormeEffScript("Sel/out20sel.root");
-   x[2]=MediaFormeEffScript("Sel/out10sel.root");
-   x[2]=MediaFormeEffScript("Sel/out10sel.root");
-   x[3]=MediaFormeEffScript("Sel/out0sel.root");
-   x[3]=MediaFormeEffScript("Sel/out0sel.root");
-   x[4]=MediaFormeEffScript("Sel/outm10sel.root");
-   x[4]=MediaFormeEffScript("Sel/outm10sel.root");
-   x[5]=MediaFormeEffScript("Sel/outm20sel.root");
-   x[5]=MediaFormeEffScript("Sel/outm20sel.root");
-   x[6]=MediaFormeEffScript("Sel/outm33sel.root");
-   x[6]=MediaFormeEffScript("Sel/outm33sel.root");
+  x[0]=MediaFormeEffScript("Sel/out33sel.root",&e[0]);
+  x[0]=MediaFormeEffScript("Sel/out33sel.root",&e[0]);
+  x[1]=MediaFormeEffScript("Sel/out20sel.root",&e[1]);
+  x[1]=MediaFormeEffScript("Sel/out20sel.root",&e[1]);
+  x[2]=MediaFormeEffScript("Sel/out10sel.root",&e[2]);
+  x[2]=MediaFormeEffScript("Sel/out10sel.root",&e[2]);
+  x[3]=MediaFormeEffScript("Sel/out0sel.root",&e[3]);
+  x[3]=MediaFormeEffScript("Sel/out0sel.root",&e[3]);
+  x[4]=MediaFormeEffScript("Sel/outm10sel.root",&e[4]);
+  x[4]=MediaFormeEffScript("Sel/outm10sel.root",&e[4]);
+  x[5]=MediaFormeEffScript("Sel/outm20sel.root",&e[5]);
+  x[5]=MediaFormeEffScript("Sel/outm20sel.root",&e[5]);
+  x[6]=MediaFormeEffScript("Sel/outm33sel.root",&e[6]);
+  x[6]=MediaFormeEffScript("Sel/outm33sel.root",&e[6]);
+  x[7]=MediaFormeEffScript("Sel/outm40sel.root",&e[7]);
+  x[7]=MediaFormeEffScript("Sel/outm40sel.root",&e[8]);
    TCanvas* canv= new TCanvas("mycanvas");
-  TGraph* grafico=new TGraph(7,y,x);
+   TGraphErrors* grafico=new TGraphErrors(8,y,x,e);
   grafico->SetMarkerStyle(8);
-  grafico->Draw("ap");
+  grafico->Draw();
   
 
 

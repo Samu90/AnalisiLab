@@ -133,7 +133,7 @@ void AnalisiForme(const char* fileName,const char* fileName2)
     newtree->Branch("hmax4",&hmax4);
     newtree->Branch("hmax6",&hmax6);
     
-    Int_t Nrms=5;
+    Int_t Nrms=3;
     UInt_t timeLow=90;
     Double_t m=0.2398;
     // ciclo sugli N eventi
