@@ -140,7 +140,7 @@ void AnalisiForme(const char* fileName,const char* fileName2)
     int nentries = tree->GetEntries();
 
     for(int j=0; j<nentries;j++){
-      if( j%100 == 0 ) cout<< "Entry: " << j << " / " << nentries <<endl;
+      if( j%200 == 0 ) cout<< "Entry: " << j << " / " << nentries <<endl;
       tree->GetEntry(j);
       //newtree->GetEntry(j);
       

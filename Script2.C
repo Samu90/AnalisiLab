@@ -11,25 +11,33 @@ Double_t Area(int t,int delta, Double_t* vec){
 }
 
 Double_t IncArea(Double_t*vec, int t0, int delta, Double_t sigma){
-  Double_t Temp[1000];
+  Double_t Temp[2000], Aree[10000], stdev;
+  int i;
+  
+  for(i=0;i<2000;i++){ Temp[i]=0;}
+   for(i=0;i<10000;i++){ Aree[i]=0;}
 
   TRandom* rand= new TRandom();
-  TH1D* histo=new TH1D();
   
-  for(int j=0;j<500;j++){
-    for(int i=t0;i<delta;i++){
-      Temp[1000]=rand->Gaus(vec[i],sigma);  
+  for(int j=0;j<10000;j++){
+    for(int i=t0;i<t0+delta;i++){
+      Temp[i]=rand->Gaus(vec[i],sigma);  
     }//chiudo for t0
-    histo->Fill(Area(t0,delta,Temp));
+    Aree[j]=Area(t0,delta,Temp);
+    //    cout<<"Area"<<Aree[j]<<endl;
   }//chiudo for j
-  return histo->GetStdDev();
+
+  stdev=TMath::RMS(10000,Aree);
+  cout<< "dev=="<< stdev<< endl;
+  return stdev;
+
+  
 }
 
 
 
 Double_t MediaFormeEffScript(const char* fileName,Double_t *var)
 {
-gROOT->Reset();
     // apre file prende il TTree di nome "newtree" dal file
     TFile* file = new TFile(fileName);
     TTree* tree = (TTree*)file->Get("newtree");
@@ -128,7 +136,7 @@ gROOT->Reset();
       temp6[i]/=(entrate);
     }// chiudo for i
 
-    Nevent=1; // correggo il numero dell'evento a mano
+ 
     
     cout<<"vdsg"<<Nsample<<endl;
     //datatree->Fill();
@@ -140,10 +148,9 @@ gROOT->Reset();
 
     TGraph *antonio = new TGraph(Nsample, time, temp0);
     antonio->SetTitle("Canale 0");
-    //antonio->SetMinimum(-400);
-    //  antonio->SetMaximum(50);
     //antonio->Draw();
-    TF1 *myf = new TF1("myf","[0]*exp(-x/[1])",140,940);
+
+    TF1 *myf = new TF1("myf","[0]*exp(-x/[1])",140,940,"Q");
     myf->SetParameter(1,300);
     myf->SetParameter(0,-100);
     antonio->Fit("myf","RV");
@@ -161,7 +168,7 @@ gROOT->Reset();
     gigetto->SetTitle("Cherenkov con Scintillazione");
     //gigetto->Draw();
 
-    TF1 *myf2 = new TF1("myf2","[0]*exp(-x/[1])",110,940);
+    TF1 *myf2 = new TF1("myf2","[0]*exp(-x/[1])",110,940,"Q");
     myf2->SetParameter(0,1);
     myf2->FixParameter(1,taufit);
     gigetto->Fit("myf2","RV");
@@ -170,21 +177,21 @@ gROOT->Reset();
     AmpC=myf2->GetParameter(0);
 
     //calcolo i t0
-     int ctrl0=0;
+    int ctrl0=0;
     int ctrl2=0;
     int Nrms=0;
     int nt0=0;
     int nt2=0;
-    Double_t rms0=.1,rms2=.1;
+    
     
     
     for(i=0;i<Nsample;i++){
       
-      if(ctrl0==0 && temp0[i]<-0.3){ //&& temp0[i+1]<-Nrms*rms0 && temp0[i+2]<-Nrms*rms0){
+      if(ctrl0==0 && temp0[i]<-0.3 && temp0[i+1]<-0.3){ //&& temp0[i+1]<-Nrms*rms0 && temp0[i+2]<-Nrms*rms0){
 	ctrl0+=1;
 	nt0=i;
       }//chiudo if
-      if(ctrl2==0 && temp2[i]<-0.3){ //&& temp2[i+1]<-Nrms*rms2 && temp2[i+2]<-Nrms*rms2){
+      if(ctrl2==0 && temp2[i]<-0.3 && temp2[i+1]<-0.3){ //&& temp2[i+1]<-Nrms*rms2 && temp2[i+2]<-Nrms*rms2){
 	ctrl2+=1;
 	nt2=i;
       }//chiudo if 
@@ -197,7 +204,7 @@ gROOT->Reset();
     }// chiudo for i
     
     Double_t m=0.2398;
-    Double_t sigma=1/m/1.732051;                    // 1/m/sqrt(3) statistico
+    Double_t sigma=1/m/1.732051;//sqrt(tree->GetEntries());                    // 1/m/sqrt(3)/sqrt(N) statistico
     //ora ho v0 e v2 corrette
     //rapporto tra le aree
     //calcolo i t0
@@ -206,16 +213,18 @@ gROOT->Reset();
     //calcolo le aree
 
     Double_t AreaC,AreaS;
-    AreaC=Area(nt2,18,temp2);
+    AreaC=Area(nt2,18,temp2);  
     AreaS=Area(nt0,945-nt0,temp0);
+
     SAreaC=IncArea(temp2,nt2,18,sigma);
     SAreaS=IncArea(temp0,nt0,945-nt0,sigma);
 
     
     cout<< AreaS<< "   " <<AreaC<< endl;
-    cout<< AreaS/AreaC<< endl;
+    cout<< AreaC/AreaS<< endl;
 
-    Double_t SigmaTot=sqrt((1/AreaC)*(1/AreaC)*SAreaS*SAreaS + (AreaS/AreaC)*(AreaS/AreaC)*SAreaC*SAreaC);
+    Double_t SigmaTot=sqrt((1/AreaS)*(1/AreaS)*SAreaC*SAreaC + (AreaC/AreaS/AreaS)*(AreaC/AreaS/AreaS)*SAreaS*SAreaS);
+    //    Double_t SigmaTot= (SAreaC/AreaC+SAreaS/AreaS)*AreaC/AreaS;
     *var=SigmaTot;
     
     /*cha0->cd(3);
@@ -231,15 +240,16 @@ gROOT->Reset();
       antoniocalabro->SetTitle("Cherenkov senza Scintillazione");
       //  antoniocalabro->SetMinimum(-250);
       //  antoniocalabro->SetMaximum(50);
-      antoniocalabro->Draw();*/
+      antoniocalabro->Draw();
 
-      Double_t scal0[1000];
+
+       Double_t scal0[1000];
       
       for(i=0;i<Nsample-2;i++){
        scal0[i] = (AmpC/AmpS*temp0[i]);
       }// chiudo for i
-      
-      /*  TGraph *pippo= new TGraph(Nsample, time,scal0);
+     
+       TGraph *pippo= new TGraph(Nsample, time,scal0);
       cha0->cd(2);
       //pippo->SetLineColorAlpha(46, 0.1);
       pippo->Draw("same");
@@ -252,7 +262,8 @@ gROOT->Reset();
       file->Close();
 
       return AreaC/AreaS;
-      
+
+     gPad->WaitPrimitive(); 
 }
 
 
@@ -261,7 +272,10 @@ void Script2(){
   Double_t y[8];
   Double_t x[8];
   Double_t e[8];
+  Double_t ex[8];
 
+  for(int i=0;i<8;i++){ ex[i]=1;}
+  
   y[0]=33;
   y[1]=20;
   y[2]=10;
@@ -270,8 +284,10 @@ void Script2(){
   y[5]=-20;
   y[6]=-33;
   y[7]=-40;
+
+  //Double_t ex[8]={0};
   
-  x[0]=MediaFormeEffScript("Sel/out33sel.root",&e[0]);
+  //x[0]=MediaFormeEffScript("Sel/out33sel.root",&e[0]);
   x[0]=MediaFormeEffScript("Sel/out33sel.root",&e[0]);
   x[1]=MediaFormeEffScript("Sel/out20sel.root",&e[1]);
   x[1]=MediaFormeEffScript("Sel/out20sel.root",&e[1]);
@@ -286,11 +302,17 @@ void Script2(){
   x[6]=MediaFormeEffScript("Sel/outm33sel.root",&e[6]);
   x[6]=MediaFormeEffScript("Sel/outm33sel.root",&e[6]);
   x[7]=MediaFormeEffScript("Sel/outm40sel.root",&e[7]);
-  x[7]=MediaFormeEffScript("Sel/outm40sel.root",&e[8]);
-   TCanvas* canv= new TCanvas("mycanvas");
-   TGraphErrors* grafico=new TGraphErrors(8,y,x,e);
+  x[7]=MediaFormeEffScript("Sel/outm40sel.root",&e[7]);
+
+  cout<<""<<endl;
+  for(int i=0;i<8;i++){cout<< x[i]<< " pm " << e[i] << endl;}
+  
+  TCanvas* canv= new TCanvas("mycanvas");
+   TGraphErrors* grafico=new TGraphErrors(8,y,x,ex,e);
   grafico->SetMarkerStyle(8);
-  grafico->Draw();
+  grafico->GetXaxis()->SetTitle("#theta (gradi)");
+  grafico->GetYaxis()->SetTitle("Ac/As");
+  grafico->Draw("ap");
   
 
 
