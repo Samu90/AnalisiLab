@@ -153,7 +153,7 @@ Double_t MediaFormeEffScript(const char* fileName,Double_t *var)
     TF1 *myf = new TF1("myf","[0]*exp(-x/[1])",140,940,"Q");
     myf->SetParameter(1,300);
     myf->SetParameter(0,-100);
-    antonio->Fit("myf","RV");
+    antonio->Fit("myf","RQ");
     gStyle->SetOptFit();
     antonio->SetTitle("Scintillazione");
     //antonio->Draw("APL");
@@ -171,7 +171,7 @@ Double_t MediaFormeEffScript(const char* fileName,Double_t *var)
     TF1 *myf2 = new TF1("myf2","[0]*exp(-x/[1])",110,940,"Q");
     myf2->SetParameter(0,1);
     myf2->FixParameter(1,taufit);
-    gigetto->Fit("myf2","RV");
+    gigetto->Fit("myf2","RQ");
     gStyle->SetOptFit();
     //gigetto->Draw("APL");
     AmpC=myf2->GetParameter(0);
@@ -227,43 +227,11 @@ Double_t MediaFormeEffScript(const char* fileName,Double_t *var)
     //    Double_t SigmaTot= (SAreaC/AreaC+SAreaS/AreaS)*AreaC/AreaS;
     *var=SigmaTot;
     
-    /*cha0->cd(3);
-      TGraph *pablo = new TGraph(Nsample, time, temp4);
-      pablo->SetTitle("Canale 4");
-      //  pablo->SetMinimum(-250);
-      //  pablo->SetMaximum(50);
-      pablo->Draw();*/
-      
-      
-      /*cha0->cd(4);
-      TGraph *antoniocalabro = new TGraph(Nsample, time, temp2);
-      antoniocalabro->SetTitle("Cherenkov senza Scintillazione");
-      //  antoniocalabro->SetMinimum(-250);
-      //  antoniocalabro->SetMaximum(50);
-      antoniocalabro->Draw();
-
-
-       Double_t scal0[1000];
-      
-      for(i=0;i<Nsample-2;i++){
-       scal0[i] = (AmpC/AmpS*temp0[i]);
-      }// chiudo for i
-     
-       TGraph *pippo= new TGraph(Nsample, time,scal0);
-      cha0->cd(2);
-      //pippo->SetLineColorAlpha(46, 0.1);
-      pippo->Draw("same");
-      */
-      //fileout->cd();
-      //datatree->Write();
-      //fileout->Close();
-      
-      
-      file->Close();
-
-      return AreaC/AreaS;
-
-     gPad->WaitPrimitive(); 
+    file->Close();
+    
+    return AreaC/AreaS;
+    
+    gPad->WaitPrimitive(); 
 }
 
 
@@ -274,7 +242,11 @@ void Script2(){
   Double_t e[8];
   Double_t ex[8];
 
-  for(int i=0;i<8;i++){ ex[i]=1;}
+  for(int i=0;i<8;i++){
+    x[i]=0;
+    y[i]=0;
+    ex[i]=1;
+  }
   
   y[0]=33;
   y[1]=20;
@@ -287,7 +259,8 @@ void Script2(){
 
   //Double_t ex[8]={0};
   
-  //x[0]=MediaFormeEffScript("Sel/out33sel.root",&e[0]);
+  x[0]=MediaFormeEffScript("Sel/out33sel.root",&e[0]);
+  x[0]=MediaFormeEffScript("Sel/out33sel.root",&e[0]);
   x[0]=MediaFormeEffScript("Sel/out33sel.root",&e[0]);
   x[1]=MediaFormeEffScript("Sel/out20sel.root",&e[1]);
   x[1]=MediaFormeEffScript("Sel/out20sel.root",&e[1]);
@@ -305,6 +278,7 @@ void Script2(){
   x[7]=MediaFormeEffScript("Sel/outm40sel.root",&e[7]);
 
   cout<<""<<endl;
+  
   for(int i=0;i<8;i++){cout<< x[i]<< " pm " << e[i] << endl;}
   
   TCanvas* canv= new TCanvas("mycanvas");
@@ -312,8 +286,11 @@ void Script2(){
   grafico->SetMarkerStyle(8);
   grafico->GetXaxis()->SetTitle("#theta (gradi)");
   grafico->GetYaxis()->SetTitle("Ac/As");
-  grafico->Draw("ap");
+ 
+  if(bool fit==true){
+    TF1* fit= new TFit("myf","[0]*x**2+[1]*x+[2]",-40, 3);
+    grafico->Fit("myf","RV");
+  }
   
-
-
+  grafico->Draw("ap");
 }
