@@ -245,7 +245,7 @@ void Script2(){
   for(int i=0;i<8;i++){
     x[i]=0;
     y[i]=0;
-    ex[i]=1;
+    ex[i]=2.728253706039;
   }
   
   y[0]=33;
@@ -279,7 +279,7 @@ void Script2(){
 
   cout<<""<<endl;
   
-  for(int i=0;i<8;i++){cout<< x[i]<< " pm " << e[i] << endl;}
+  for(int i=0;i<8;i++){cout << x[i] << " pm " << e[i] << endl;}
   
   TCanvas* canv= new TCanvas("mycanvas");
    TGraphErrors* grafico=new TGraphErrors(8,y,x,ex,e);
@@ -287,10 +287,16 @@ void Script2(){
   grafico->GetXaxis()->SetTitle("#theta (gradi)");
   grafico->GetYaxis()->SetTitle("Ac/As");
  
-  if(bool fit==true){
-    TF1* fit= new TFit("myf","[0]*x**2+[1]*x+[2]",-40, 3);
-    grafico->Fit("myf","RV");
-  }
+  bool control=true;
   
+    if(control==true){
+      TF1* fit= new TF1("myf","[0]*x**2+[1]*x+[2]",-45, -5);
+      fit->FixParameter(0, -0.000006);
+      fit->SetParameter(1, -3.98e-4);
+      fit->SetParameter(1, -1.21e-3);
+      grafico->Fit("myf","RV");
+    }
+  
+    
   grafico->Draw("ap");
 }
